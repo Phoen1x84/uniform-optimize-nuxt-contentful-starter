@@ -64,5 +64,10 @@ export default {
       return TalkListItem;
     },
   },
+  methods: {
+    clickEvent() {
+      console.log('testing');
+    }
+  }
 };
 </script>
