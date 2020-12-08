@@ -1,28 +1,6 @@
 <template>
-  <Personalize :variations="variations" tracking-event-name="keySpeakerPersonalized">    
-    <template v-slot:default="{ personalized, variations }" v-if="!mappedPersonalised">
-      <div class="key-speaker">
-        <section class="key-speaker__inner">
-          <h2 class="key-speaker__title">{{ personalized ? fields.titleWhenPersonalised : fields.name }}</h2>
-          <article class="key-speaker__card" v-for="(item, index) in variations" :key="index">
-            <figure class="key-speaker__card-img" v-if="imageFieldFormat(item).src">
-              <img
-                :src="imageFieldFormat(item).src"
-                :alt="imageFieldFormat(item).alt"
-                :width="imageFieldFormat(item).width"
-                :height="imageFieldFormat(item).height"
-                loading="lazy"
-              />
-            </figure>
-            <div class="key-speaker__card-content">
-              <h3 class="key-speaker__subtitle">{{item.fields.name}}</h3>
-              <p class="key-speaker__desc">{{ item.fields.jobTitle}}</p>
-            </div>
-          </article>
-        </section>
-      </div>
-    </template>
-    <template v-slot:default="{ personalized, variations }" v-else>
+  <Personalize :variations="formatFields(variations)" tracking-event-name="keySpeakerPersonalized">
+    <template v-slot:default="{ personalized, variations }">
       <div class="key-speaker">
         <section class="key-speaker__inner">
           <h2 class="key-speaker__title">{{ personalized ? fields.titleWhenPersonalised : fields.name }}</h2>
@@ -58,7 +36,7 @@ export default {
   data() {
     return {
       // state just to allow switching switching different variations outputs
-      mappedPersonalised: false
+      mappedPersonalised: true
     }
   },
   props: {
@@ -79,13 +57,15 @@ export default {
   },
   computed: {
     variations() {
-      if(!this.mappedPersonalised) {
-        // works perfectly
-        return contentfulOptimizeListReader(this.fields.unfrmOptP13nList);
-      }
-      // this doesn't return the personalised speaker and only every returns the first person in the array
-      return contentfulOptimizeListReader(this.fields.unfrmOptP13nList).map((item, index) => {
-        // can formatting at this level be done?
+      return contentfulOptimizeListReader(this.fields.unfrmOptP13nList);
+    }
+  },
+  mounted() {
+    this.$uniform.optimize.trackBehavior(this.fields.unfrmOptIntentTag);    
+  },
+  methods: {    
+    formatFields(variationList) {    
+      return variationList.map((item, index) => {
         return {
           id: index,
           jobTitle: item.fields.jobTitle,
@@ -94,21 +74,11 @@ export default {
             alt: item.fields.photo.fields.title,
             src: item.fields.photo.fields.file.url,
             ...item.fields.photo.fields.file.details.image
-          }
+          },
+          intentTag: { ...item.intentTag }, // must be included          
+          type: item.type // must be included
         }
-      });    
-    },
-  },
-  mounted() {
-    this.$uniform.optimize.trackBehavior(this.fields.unfrmOptIntentTag);    
-  },
-  methods: {
-    imageFieldFormat(context) {
-      return {
-        alt: context?.fields?.photo?.fields?.title,
-        src: context?.fields?.photo?.fields?.file?.url,
-        ...context?.fields?.photo?.fields?.file?.details?.image
-      }
+      })
     }
   }
 };
