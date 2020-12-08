@@ -5,12 +5,12 @@
         <section class="key-speaker__inner">
           <h2 class="key-speaker__title">{{ personalized ? fields.titleWhenPersonalised : fields.name }}</h2>
           <article class="key-speaker__card" v-for="(item, index) in variations" :key="index">
-            <figure class="key-speaker__card-img" v-if="imageFormatProps(item).src">
+            <figure class="key-speaker__card-img" v-if="imageFieldFormat(item).src">
               <img
-                :src="imageFormatProps(item).src"
-                :alt="imageFormatProps(item).alt"
-                :width="imageFormatProps(item).width"
-                :height="imageFormatProps(item).height"
+                :src="imageFieldFormat(item).src"
+                :alt="imageFieldFormat(item).alt"
+                :width="imageFieldFormat(item).width"
+                :height="imageFieldFormat(item).height"
                 loading="lazy"
               />
             </figure>
@@ -57,6 +57,7 @@ export default {
   },
   data() {
     return {
+      // state just to allow switching switching different variations outputs
       mappedPersonalised: false
     }
   },
@@ -79,9 +80,12 @@ export default {
   computed: {
     variations() {
       if(!this.mappedPersonalised) {
+        // works perfectly
         return contentfulOptimizeListReader(this.fields.unfrmOptP13nList);
       }
+      // this doesn't return the personalised speaker and only every returns the first person in the array
       return contentfulOptimizeListReader(this.fields.unfrmOptP13nList).map((item, index) => {
+        // can formatting at this level be done?
         return {
           id: index,
           jobTitle: item.fields.jobTitle,
@@ -99,7 +103,7 @@ export default {
     this.$uniform.optimize.trackBehavior(this.fields.unfrmOptIntentTag);    
   },
   methods: {
-    imageFormatProps(context) {
+    imageFieldFormat(context) {
       return {
         alt: context?.fields?.photo?.fields?.title,
         src: context?.fields?.photo?.fields?.file?.url,
