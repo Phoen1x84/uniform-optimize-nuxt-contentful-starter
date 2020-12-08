@@ -4,6 +4,7 @@ import PersonalizedHero from './PersonalizedHero';
 import TalkList from './TalkList/TalkList';
 import RegisterForm from './RegisterForm';
 import WhyAttend from './WhyAttend';
+import KeySpeaker from './Speakers/KeySpeakers';
 
 const componentMap = {
   hero: MainHero,
@@ -13,6 +14,7 @@ const componentMap = {
   talksList: TalkList,
   registrationForm: RegisterForm,
   whyAttend: WhyAttend,
+  KeySpeaker: KeySpeaker
 };
 
 export function componentResolver(variantType) {

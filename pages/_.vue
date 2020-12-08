@@ -31,9 +31,11 @@ export default {
     return Promise.all([
       $contentful.getPageBySlug($preview, route.path),
       $contentful.getEntriesByContentType($preview, 'talk'),
+      // $contentful.getEntriesByContentType($preview, 'keySpeakers')
     ]).then((results) => {
       const page = results[0];
       const talks = results[1];
+      // const speakers = results[2];
       return { talks, page, slug: route.path };
     });
   },
@@ -74,7 +76,7 @@ export default {
   },
   provide() {
     return {
-      talks: this.talks,
+      talks: this.talks
     };
   },
   // https://nuxtjs.org/docs/2.x/components-glossary/pages-watchquery
