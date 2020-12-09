@@ -30,12 +30,10 @@ export default {
 
     return Promise.all([
       $contentful.getPageBySlug($preview, route.path),
-      $contentful.getEntriesByContentType($preview, 'talk'),
-      // $contentful.getEntriesByContentType($preview, 'keySpeakers')
+      $contentful.getEntriesByContentType($preview, 'talk')      
     ]).then((results) => {
       const page = results[0];
-      const talks = results[1];
-      // const speakers = results[2];
+      const talks = results[1];      
       return { talks, page, slug: route.path };
     });
   },
